@@ -477,7 +477,7 @@ static int connect_to_watcher(const char *statedir)
 	return fd;
 }
 
-static uid_t muid = 1, mgid = 1;
+static uid_t muid = 0, mgid = 0;
 
 static int create_ns(const char *statedir, const char *name)
 {
@@ -491,9 +491,9 @@ static int create_ns(const char *statedir, const char *name)
 
 	if (access("/proc/self/setgroups", O_RDONLY) == 0)
 		write_file("/proc/self/setgroups", "deny");
-	snprintf(str, sizeof(str), "0 %d %d", uid, muid);
+	snprintf(str, sizeof(str), "%d %d 1", muid, uid);
 	write_file("/proc/self/uid_map", str);
-	snprintf(str, sizeof(str), "0 %d %d", gid, mgid);
+	snprintf(str, sizeof(str), "%d %d 1", mgid, gid);
 	write_file("/proc/self/gid_map", str);
 
 	if (sethostname(name, strlen(name)) < 0)
